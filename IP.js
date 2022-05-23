@@ -71,7 +71,9 @@ const getNetwork = ({ip, mask}) => {
   return res.join('.');
 }
 
+const createIPv6 = (address) => {
 
+}
 
 const a = parseIP('123.4.5.6/23');
 const binIP = ipToBinary(a);
@@ -81,69 +83,3 @@ const binMask = maskToBinary(a);
 const mask = maskToDotQoud(a);
 const network = getNetwork(a);
 console.log(a, binIP, intIP, strIP, binMask, mask, network); 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const binaryToNumb = (mask) => {
-//   const maskk = [];
-//   for(let str of mask) {
-//     str = parseInt(str, 2);
-//     maskk.push(str);
-//   }
-//   return maskk;
-// }
-
-// const createIPv6 = (address) => {
-
-// }
-
-// const toBinary = (add) => {
-//   const ad = add.split('.');
-//   console.log(ad);
-//   let bin = [];
-//   for (let num of ad) {
-//     num = parseInt(num);
-//     console.log(num);
-//     num = num.toString(2).padStart(8,"0");
-//     bin.push(num);
-//   }
-//   bin = bin.join('.');
-//   return bin
-// }
-
-// const networkV4 = (address, mask) => {
-  
-// }
-
-
-// const ipAd = (add) => {
-//     const address = add.split('/');
-    
-// }
-
-
-
-// const IP = parseIP('123.45.6.7/25');
-// console.log(IP);
-
-// // const aaaa = parseIP('123.3.4.2/24');
-// // console.log(aaaa);
-// // console.log((aaaa.toBinary()));
-// // console.log("hola")
-// // console.log(binaryToNumb(maskToBinary(24)));
