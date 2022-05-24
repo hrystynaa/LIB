@@ -1,6 +1,6 @@
 'use strict'
 
-class IPv4 {
+class IP {
   constructor(ip, mask) {
     this.ip = ip;
     this.mask = mask;
@@ -10,7 +10,7 @@ class IPv4 {
 const createIPv4 = (address) => {
   const add = address.split('/');
   add[0] = add[0].split('.');
-  return new IPv4(...add);
+  return new IP(...add);
 }
 
 const parseIP = (ad) => ad.includes('.') ? createIPv4(ad) : createIPv6(ad);//must be isValidate function
@@ -72,14 +72,72 @@ const getNetwork = ({ip, mask}) => {
 }
 
 const createIPv6 = (address) => {
+  const add = address.split('/');
+  const mask = add[1];
+  const parts = add[0].split(':');
+  if(parts.length < 8 && parts.includes('')){
 
+  }
+  return new IP(parts, mask);
 }
 
-const a = parseIP('123.4.5.6/23');
-const binIP = ipToBinary(a);
-const intIP = ipToInt(a);
-const strIP = ipToString(a);
-const binMask = maskToBinary(a);
-const mask = maskToDotQoud(a);
-const network = getNetwork(a);
-console.log(a, binIP, intIP, strIP, binMask, mask, network); 
+const ip6ToInt = ({ip}) => {
+  const nums = ip.map(n => BigInt(parseInt(n,16)));
+  if(nums.includes(NaN)) throw Error('Wrong IPv6 format');
+  return nums.reduce((res, item) => (res << 16n) + item, 0n);
+}
+
+const ip6ToBinary = ({ip}) => {
+  const bin = [];
+  for (let part of ip) {
+    part = parseInt(part, 16).toString(2).padStart(16,"0");       
+    bin.push(part);  
+  }
+  return bin.join(':');
+}
+
+const ipToColonHex = ({ip}) => {
+  return ip.join(':');
+}
+
+const mask6ToBinary = ({mask}) => {
+  let num = parseInt(mask, 10);
+  let bin = '';
+  if(num >= 128 || num < 1) throw new Error('Wrong mask');
+  for(let i = 1; i <= num; i++){
+    bin += '1';
+    if(i % 16 === 0) bin += ':';
+  }
+  for(let i = num + 1; i <= 128; i++){
+    bin += '0';
+    if(i % 16 === 0 && i !== 128) bin += ':';
+  }
+  // for(let i = 1; i <= 128; i++) {
+  //   if(num !== 0)  {
+  //     bin += '1';
+  //     num--;
+  //   } else bin += '0'
+  //   if(i % 16 === 0 && i !== 128) bin += ':';
+  // }
+  return bin;
+}
+
+const maskToHex = ({mask}) => {
+  
+}
+
+
+// const a = parseIP('123.4.5.6/23');
+// const binIP = ipToBinary(a);
+// const intIP = ipToInt(a);
+// const strIP = ipToString(a);
+// const binMask = maskToBinary(a);
+// const mask = maskToDotQoud(a);
+// const network = getNetwork(a);
+// console.log(a, binIP, intIP, strIP, binMask, mask, network); 
+const b = parseIP('1:f:ff:f2f:f:abf:0:188/64');
+const intIP6 = ip6ToInt(b);
+const bin6IP = ip6ToBinary(b);
+const colon6 = ipToColonHex(b);
+const mask6 = mask6ToBinary(b);
+console.log(b, intIP6, bin6IP, colon6, mask6);
