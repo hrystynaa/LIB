@@ -71,6 +71,49 @@ const getNetwork = ({ip, mask}) => {
   return res.join('.');
 }
 
+const privateIP = [
+  ['10.0.0.0', '8'],
+  ['172.16.0.0', '12'],
+  ['192.168.0.0', '16'],
+]
+
+const isPrivate = (ip) => {
+  const network = getNetwork(ip);
+  const address = [network, ip.mask];
+  let res = true;
+  for(const value of local){
+    for(let i = 0; i < address.length; i++){
+      res = res && address[i] === value[i];
+    }
+  res = true;
+  }
+  return res;
+}
+
+const local = ['169.254.0.0','16'];
+  
+const isLocal = (ip) => {
+  const network = getNetwork(ip);
+  const address = [network, ip.mask];
+  let res = true;
+  for(const value of local){
+  res = res && address.includes(value);
+  }
+  return res;
+}
+
+const loopBack = ['127.0.0.0', '8'];
+
+const isLoopBack = (ip) => {
+  const network = getNetwork(ip);
+  const address = [network, ip.mask];
+  let res = true;
+  for(const value of loopBack){
+  res = res && address.includes(value);
+  }
+  return res;
+}
+
 const createIPv6 = (address) => {
   const add = address.split('/');
   const mask = add[1];
@@ -127,14 +170,17 @@ const maskToHex = ({mask}) => {
 }
 
 
-// const a = parseIP('123.4.5.6/23');
-// const binIP = ipToBinary(a);
-// const intIP = ipToInt(a);
-// const strIP = ipToString(a);
-// const binMask = maskToBinary(a);
-// const mask = maskToDotQoud(a);
-// const network = getNetwork(a);
-// console.log(a, binIP, intIP, strIP, binMask, mask, network); 
+const a = parseIP('10.2.2.202/8');
+const binIP = ipToBinary(a);
+const intIP = ipToInt(a);
+const strIP = ipToString(a);
+const binMask = maskToBinary(a);
+const mask = maskToDotQoud(a);
+const network = getNetwork(a);
+const priv = isPrivate(a);
+const localip = isLocal(a);
+const loop = isLoopBack(a); 
+console.log(a, binIP, intIP, strIP, binMask, mask, network, priv, localip, loop); 
 const b = parseIP('1:f:ff:f2f:f:abf:0:188/64');
 const intIP6 = ip6ToInt(b);
 const bin6IP = ip6ToBinary(b);
