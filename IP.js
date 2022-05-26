@@ -42,7 +42,7 @@ const ipToDotQoud = ({ip}) => {
 const maskToBinary = ({mask}) => {
   let num = parseInt(mask, 10);
   let bin = '';
-  if(num >= 32 || num < 1) throw new Error('Wrong mask');
+  if(num > 32 || num < 1) throw new Error('Wrong mask');
   for(let i = 1; i <= 32; i++) {
     if(num !== 0)  {
       bin += '1';
@@ -77,41 +77,43 @@ const privateIP = [
   ['192.168.0.0', '16'],
 ]
 
-const isPrivate = (ip) => {
-  const network = getNetwork(ip);
-  const address = [network, ip.mask];
-  let res = true;
-  for(const value of local){
-    for(let i = 0; i < address.length; i++){
-      res = res && address[i] === value[i];
-    }
-  res = true;
+const isPrivate = ({ip, mask}) => {
+  for(const net of privateIP) {
+    const netmask = net[1];
+    const network = getNetwork({ip, mask:netmask});
+    if(network === net[0] && parseInt(mask) >= parseInt(netmask)) return true;
   }
-  return res;
+  return false;
 }
 
 const local = ['169.254.0.0','16'];
   
-const isLocal = (ip) => {
-  const network = getNetwork(ip);
-  const address = [network, ip.mask];
-  let res = true;
-  for(const value of local){
-  res = res && address.includes(value);
-  }
-  return res;
+const isLocal = ({ip, mask}) => {
+  const netmask = local[1];
+  const network = getNetwork({ip, mask:netmask});
+  if(network === local[0] && parseInt(mask) >= parseInt(netmask)) return true;
+  return false;
 }
 
 const loopBack = ['127.0.0.0', '8'];
 
-const isLoopBack = (ip) => {
-  const network = getNetwork(ip);
-  const address = [network, ip.mask];
-  let res = true;
-  for(const value of loopBack){
-  res = res && address.includes(value);
-  }
-  return res;
+const isLoopBack = ({ip, mask}) => {
+  const netmask = loopBack[1];
+  const network = getNetwork({ip, mask:netmask});
+  if(network === loopBack[0] && parseInt(mask) >= parseInt(netmask)) return true;
+  return false;
+}
+
+const multicast = ['224.0.0.0', '4'];
+
+const isMulticast = ({ip, mask}) => {
+  const netmask = multicast[1];
+  const network = getNetwork({ip, mask:netmask});
+  if(network === multicast[0] && parseInt(mask) >= parseInt(netmask)) return true;
+  return false;
+}
+
+const isBroadcast = ({ip, mask}) => {
 }
 
 const createIPv6 = (address) => {
@@ -170,7 +172,7 @@ const maskToHex = ({mask}) => {
 }
 
 
-const a = parseIP('10.2.2.202/8');
+const a = parseIP('224.0.0.2/4');
 const binIP = ipToBinary(a);
 const intIP = ipToInt(a);
 const strIP = ipToString(a);
@@ -180,7 +182,8 @@ const network = getNetwork(a);
 const priv = isPrivate(a);
 const localip = isLocal(a);
 const loop = isLoopBack(a); 
-console.log(a, binIP, intIP, strIP, binMask, mask, network, priv, localip, loop); 
+const multi = isMulticast(a);
+console.log(a, binIP, intIP, strIP, binMask, mask, network, priv, localip, loop, multi); 
 const b = parseIP('1:f:ff:f2f:f:abf:0:188/64');
 const intIP6 = ip6ToInt(b);
 const bin6IP = ip6ToBinary(b);
