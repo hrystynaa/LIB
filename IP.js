@@ -1,7 +1,7 @@
 'use strict'
 
 const BITS_V4 = 32;
-const BYTES_v4 = 4;
+const BYTES_V4 = 4;
 const LOCAL = ['169.254.0.0','16'];
 const LOOPBACK = ['127.0.0.0', '8'];
 const MULTICAST = ['224.0.0.0', '4'];
@@ -61,7 +61,7 @@ class IPv4 {
 
   maskToDotQoud() {
     const binMask = this.maskToBinary().split('.');
-    for(let i = 0; i < BYTES_v4; i++) {
+    for(let i = 0; i < BYTES_V4; i++) {
       binMask[i] = parseInt(binMask[i], 2);
     }
     return binMask.join('.');
@@ -71,7 +71,7 @@ class IPv4 {
     const ipNum = this.ip.map(part => parseInt(part));
     const maskNum = this.maskToDotQoud().split('.').map(part => parseInt(part));
     const res = [];
-    for(let i = 0; i < BYTES_v4; i++) {
+    for(let i = 0; i < BYTES_V4; i++) {
       res.push(ipNum[i] & maskNum[i]);
     }
     return res.join('.');
@@ -122,7 +122,7 @@ class IPv4 {
     let len = this.mask % 8;
     let res;
     const broadIP = [];
-    for(let i = maskBit; i < 4; i++) {
+    for(let i = maskBit; i < BYTES_V4; i++) {
       res = '';
       if (i === maskBit) res = binIP[i].slice(0, len);
       binIP[i] = res.padEnd(8,"1");
@@ -186,7 +186,7 @@ class IPv6 {
         nums = '';
       }
     }
-    for(let i = 0; i < 32; i++) {
+    for(let i = 0; i < OCTETS_V6; i++) {
       let num = bin[i];
       nums += parseInt(num, 2).toString(16);
       if(i % 4 === 3) {
@@ -240,7 +240,6 @@ class IPv6 {
 
   isLinkLocal() {
     const link = LINK_LOCAL[0].split(':');
-    //const nums = this.ip.slice(0,4);
     let res = true;
     if(parseInt(this.mask) >= parseInt(LINK_LOCAL[1])) {
       for( let i = 0; i < 4; i++) {
@@ -282,10 +281,10 @@ const createIPv6 = (address) => {
   const add = address.split('/');
   const mask = add[1];
   const parts = add[0].split(':');
-  if(parts.length < 8 && parts.includes('')){
+  if(parts.length < COLONS_V6 && parts.includes('')){
     const i = indexOf('::');
     parts.splice(i, 1, '0000');
-    while(parts.length < 8) {
+    while(parts.length < COLONS_V6) {
       i++;
       parts.splice(i, 0, '0000');
     }
@@ -293,30 +292,3 @@ const createIPv6 = (address) => {
   const ip = parts.map(part => part.padStart(4, "0"));
   return new IPv6(ip, mask);
 }
-
-const a = parseIP('220.255.255.255/8');
-const binIP = a.ipToBinary();
-const intIP = a.ipToInt();
-const dotip = a.ipToDotQoud();
-const binMask = a.maskToBinary();
-const mask = a.maskToDotQoud();
-const network = a.getNetwork();
-const priv = a.isPrivate();
-const localip = a.isLocal();
-const loop = a.isLoopBack(); 
-const multi = a.isMulticast();
-const broad = a.toBroadcast();
-const isb = a.isBroadcast();
-console.log(a, binIP, intIP, dotip, binMask, mask, network, priv, localip, loop, multi, broad, isb); 
-const b = parseIP('fe80:000:0:0:0:0:0:1/64');
-const intIP6 = b.ipToInt();
-const bin6IP = b.ipToBinary();
-const colon6 = b.ipToColonHex();
-const mask6 = b.prefixToBinary();
-const m6 = b.prefixToColonHex();
-const net6 = b.getNetwork();
-const mul6 = b.isMulticast();
-const glob6 = b.isGlobal();
-const loopbackv6 = b.isLoopback();
-const link = b.isLinkLocal();
-console.log(b, intIP6, bin6IP, colon6, mask6, m6, net6, mul6, glob6, loopbackv6, link);
