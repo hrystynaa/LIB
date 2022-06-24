@@ -276,32 +276,37 @@ const createIPv4 = address => {
 const isValidV6 = address => {
   let res = true;
   res = res && address.includes(':') && address.includes('/');
-  const re =
-    /[0-9a-f]{0,4}:[0-9a-f]{0,4}:[0-9a-f]{0,4}:[0-9a-f]{0,4}:[0-9a-f]{0,4}:[0-9a-f]{0,4}:[0-9a-f]{0,4}:[0-9a-f]{0,4}\/\d{1,3}$/;
-  res = res && address.search(re) === 0;
   if (address.includes('::')) {
     res =
       res &&
-      address.includes('::') &&
       address.indexOf('::') === address.lastIndexOf('::');
+    return res;
   }
+  const regAd = '[0-9a-f]{0,4}';
+  const regMask = '/\\d{1,3}$';
+  const strReg = `${regAd}:${regAd}:${regAd}:${regAd}:${regAd}:${regAd}:${regAd}:${regAd}${regMask}`;
+  const regIp = new RegExp(strReg);
+  res =
+    res &&
+    address.search(regIp) === 0 &&
+    address.lastIndexOf(':') !== (address.indexOf('/') - 1);
   return res;
 };
 
 const createIPv6 = address => {
   const add = address.split('/');
   const mask = add[1];
-  const parts = add[0].split(':');
-  if (parts.length < COLONS_V6 && parts.includes('')) {
-    let i = indexOf('::');
-    parts.splice(i, 1, '0000');
+  const parts = add[0].split('::')[0].split(':');
+  if (parts.length <= COLONS_V6) {
+    let i = parts.length;
     while (parts.length < COLONS_V6) {
+      parts[i] = '0000';
       i++;
-      parts.splice(i, 0, '0000');
     }
+    const ip = parts.map(part => part.padStart(4, '0'));
+    return new IPv6(ip, mask);
   }
-  const ip = parts.map(part => part.padStart(4, '0'));
-  return new IPv6(ip, mask);
+  return new Error('This is not valid address');
 };
 
 const parseIP = ad =>
@@ -310,6 +315,3 @@ const parseIP = ad =>
     isValidV6(ad) ?
       createIPv6(ad) :
       new Error('This is not valid address'));
-
-const a = parseIP('123:ab:f:123:123:1:1:0/64');
-console.log(a);
