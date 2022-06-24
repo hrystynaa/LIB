@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 'use strict';
 
 const BITS_V4 = 32;
@@ -82,7 +83,7 @@ class IPv4 {
     for (const net of PRIVATE_IP) {
       const netmask = net[1];
       const network = this.getNetwork();
-      if (network === net[0] && parseInt(mask) >= parseInt(netmask))
+      if (network === net[0] && parseInt(this.mask) >= parseInt(netmask))
         return true;
     }
     return false;
@@ -258,13 +259,6 @@ class IPv6 {
   }
 }
 
-const parseIP = ad =>
-  (isValidV4(ad) ?
-    createIPv4(ad) :
-    isValidV6(ad) ?
-      createIPv6(ad) :
-      new Error('This is not valid address'));
-
 const isValidV4 = address => {
   if (address.includes('.') && address.includes('/')) {
     const re = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2}$/;
@@ -283,7 +277,7 @@ const isValidV6 = address => {
   let res = true;
   res = res && address.includes(':') && address.includes('/');
   const re =
-    /[0-9a-f]{0,4}\:[0-9a-f]{0,4}\:[0-9a-f]{0,4}\:[0-9a-f]{0,4}\:[0-9a-f]{0,4}\:[0-9a-f]{0,4}\:[0-9a-f]{0,4}\:[0-9a-f]{0,4}\/\d{1,3}$/;
+    /[0-9a-f]{0,4}:[0-9a-f]{0,4}:[0-9a-f]{0,4}:[0-9a-f]{0,4}:[0-9a-f]{0,4}:[0-9a-f]{0,4}:[0-9a-f]{0,4}:[0-9a-f]{0,4}\/\d{1,3}$/;
   res = res && address.search(re) === 0;
   if (address.includes('::')) {
     res =
@@ -299,7 +293,7 @@ const createIPv6 = address => {
   const mask = add[1];
   const parts = add[0].split(':');
   if (parts.length < COLONS_V6 && parts.includes('')) {
-    const i = indexOf('::');
+    let i = indexOf('::');
     parts.splice(i, 1, '0000');
     while (parts.length < COLONS_V6) {
       i++;
@@ -309,3 +303,13 @@ const createIPv6 = address => {
   const ip = parts.map(part => part.padStart(4, '0'));
   return new IPv6(ip, mask);
 };
+
+const parseIP = ad =>
+  (isValidV4(ad) ?
+    createIPv4(ad) :
+    isValidV6(ad) ?
+      createIPv6(ad) :
+      new Error('This is not valid address'));
+
+const a = parseIP('123:ab:f:123:123:1:1:0/64');
+console.log(a);
