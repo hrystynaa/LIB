@@ -1,0 +1,28 @@
+{
+  "name": "lib",
+  "version": "1.0.0",
+  "description": "JavaScript IPv4 and IPv6 lib",
+  "main": "IP.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint . --fix && prettier --write \"**/*.js\" \"**/*.json\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hrystynaa/LIB.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hrystynaa/LIB/issues"
+  },
+  "homepage": "https://github.com/hrystynaa/LIB#readme",
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^8.18.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.30.1",
+    "prettier": "^2.7.1"
+  }
+}
