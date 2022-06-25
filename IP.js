@@ -216,7 +216,7 @@ class IPv6 {
     for (let i = res.length - 1; i >= 0; i--) {
       if (parseInt(res[i], 16) !== 0) {
         res.splice(i + 1);
-        res.push(':');
+        if (res.length < COLONS_V6) res.push(':');
       }
     }
     return res.join(':');
@@ -295,7 +295,7 @@ const createIPv6 = address => {
   const add = address.split('/');
   const mask = add[1];
   const fullP = add[0].split('::');
-  if (fullP[0].includes(':')) {
+  if (fullP[0] !== '') {
     const parts = fullP[0].split(':');
     while (parts.length < COLONS_V6) {
       parts.push('0000');
@@ -303,7 +303,7 @@ const createIPv6 = address => {
     const ip = parts.map(part => part.padStart(4, '0'));
     return new IPv6(ip, mask);
   }
-  if (fullP[0].includes('')) {
+  if (fullP[1] !== '' || fullP[0] === '') {
     const parts = fullP[1].split(':');
     while (parts.length < COLONS_V6) {
       parts.unshift('0000');
