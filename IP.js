@@ -277,9 +277,7 @@ const isValidV6 = address => {
   let res = true;
   res = res && address.includes(':') && address.includes('/');
   if (address.includes('::')) {
-    res =
-      res &&
-      address.indexOf('::') === address.lastIndexOf('::');
+    res = res && address.indexOf('::') === address.lastIndexOf('::');
     return res;
   }
   const regAd = '[0-9a-f]{0,4}';
@@ -289,7 +287,7 @@ const isValidV6 = address => {
   res =
     res &&
     address.search(regIp) === 0 &&
-    address.lastIndexOf(':') !== (address.indexOf('/') - 1);
+    address.lastIndexOf(':') !== address.indexOf('/') - 1;
   return res;
 };
 
@@ -309,9 +307,11 @@ const createIPv6 = address => {
   return new Error('This is not valid address');
 };
 
-const parseIP = ad =>
+const createIP = ad =>
   (isValidV4(ad) ?
     createIPv4(ad) :
     isValidV6(ad) ?
       createIPv6(ad) :
       new Error('This is not valid address'));
+
+module.exports = createIP;
