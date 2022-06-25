@@ -294,12 +294,19 @@ const isValidV6 = address => {
 const createIPv6 = address => {
   const add = address.split('/');
   const mask = add[1];
-  const parts = add[0].split('::')[0].split(':');
-  if (parts.length <= COLONS_V6) {
-    let i = parts.length;
+  const fullP = add[0].split('::');
+  if (fullP[0].includes(':')) {
+    const parts = fullP[0].split(':');
     while (parts.length < COLONS_V6) {
-      parts[i] = '0000';
-      i++;
+      parts.push('0000');
+    }
+    const ip = parts.map(part => part.padStart(4, '0'));
+    return new IPv6(ip, mask);
+  }
+  if (fullP[0].includes('')) {
+    const parts = fullP[1].split(':');
+    while (parts.length < COLONS_V6) {
+      parts.unshift('0000');
     }
     const ip = parts.map(part => part.padStart(4, '0'));
     return new IPv6(ip, mask);
