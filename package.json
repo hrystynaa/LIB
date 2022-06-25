@@ -4,7 +4,7 @@
   "description": "JavaScript IPv4 and IPv6 lib",
   "main": "IP.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run -s lint && node tests/tests.js",
     "lint": "eslint . --fix && prettier --write \"**/*.js\" \"**/*.json\""
   },
   "repository": {
